@@ -1,0 +1,7 @@
+# Downloaded data stays out of git; the README says where to get it
+data/raw/
+# Your API key. Never commit this.
+.env
+__pycache__/
+*.pyc
+.DS_Store
