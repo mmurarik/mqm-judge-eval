@@ -20,3 +20,15 @@ severity.
 ## Status
 
 Work in progress. Results will be added here as each step is done.
+
+## Ideas for later
+
+- **A panel of AI judges.** Several judges review each passage and their answers
+  are combined, the way a human panel's would be. One version shapes each judge
+  on a real reviewer's style (one strict, others lenient) and checks whether the
+  panel beats a single judge.
+- **A development set.** Tune the judge's instructions on passages outside the
+  test set, then freeze them before the test.
+- **Context.** Give the judge the neighboring passages, as the human reviewers had.
+- **Other language pairs.** Google's 2024 release covers more than English to
+  Spanish; check whether the results hold.
