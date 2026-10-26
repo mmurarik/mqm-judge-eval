@@ -6,13 +6,14 @@ Saves out/segments_enes.csv (one row per translation).
 from pathlib import Path
 
 from explore import load
-from scoring import score_segments
+from scoring import CRITICAL, CRITICAL_SIDE_CHECK, score_segments
 
 OUT = Path(__file__).resolve().parent.parent / "out"
 
 
 def main() -> None:
-    segs = score_segments(load())
+    errors = load()
+    segs = score_segments(errors)
     OUT.mkdir(exist_ok=True)
     segs.to_csv(OUT / "segments_enes.csv", index=False)
 
@@ -38,6 +39,13 @@ def main() -> None:
                  .pivot_table(index="system", columns="rater", values="any_error", aggfunc="mean"))
     harshest = by_system.idxmax(axis=1).value_counts()
     print(f"   systems where each reviewer was the harshest of the four: {harshest.to_dict()}")
+
+    print(f"\n4. SIDE CHECK: DOES THE RANKING CHANGE IF CRITICAL WEIGHS {CRITICAL_SIDE_CHECK:g} INSTEAD OF {CRITICAL:g}?")
+    alt = score_segments(errors, critical=CRITICAL_SIDE_CHECK).groupby("system")["penalty"].mean()
+    alt_rank = alt.rank(method="min").astype(int)
+    for rank, system in enumerate(ranking.index, start=1):
+        moved = "" if alt_rank[system] == rank else f"  -> {alt_rank[system]}"
+        print(f"   {rank:2}. {system:<18}{moved}")
 
 
 if __name__ == "__main__":
