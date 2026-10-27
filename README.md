@@ -23,6 +23,10 @@ Work in progress. Results will be added here as each step is done.
 
 ## Ideas for later
 
+- **Rule-based checks before the AI.** A plain script that catches mechanical
+  failures (web code like `&quot;`, chatbot replies instead of translations,
+  text left in English, empty output) on all translations for free, so the AI
+  judge only handles meaning. Measure it against the reviewers like the judge.
 - **A panel of AI judges.** Several judges review each passage and their answers
   are combined, the way a human panel's would be. One version shapes each judge
   on a real reviewer's style (one strict, others lenient) and checks whether the
