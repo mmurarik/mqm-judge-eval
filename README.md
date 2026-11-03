@@ -86,7 +86,25 @@ times.
   and the range.
 
 To reproduce: `src/get_data.py` downloads the ratings, then run the steps in
-order. Step 5 needs an Anthropic API key in `.env`.
+order. The judge step needs an Anthropic API key in `.env`.
+
+## Outputs
+
+The results are in `out/`, so you can read them without rerunning anything.
+
+- [`out/judge_enes.csv`](out/judge_enes.csv): the judge's verdict on each of
+  the 108 test translations, with every error it found, its severity, and the
+  judge's explanation.
+- [`out/sample_enes.csv`](out/sample_enes.csv): the same 108 translations with
+  the reviewer's penalty points and group. Join it to the judge file on
+  `seg_id`.
+- [`out/segments_enes.csv`](out/segments_enes.csv): all 9,330 translations
+  with their penalty points, error count and reviewer.
+
+These files are built from Google's WMT24 MQM ratings
+(https://github.com/google/wmt-mqm-human-evaluation), which are licensed under
+Apache 2.0. The source passages, translations and reviewer ratings are
+Google's. The penalty points and the judge's verdicts are this project's.
 
 ## Ideas for later
 
