@@ -1,0 +1,119 @@
+<title>Step 2 Penalty Scores</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; numbers first, then why, then the two rankings. */
+:root{
+  --bg:#fbfaf7; --panel:#f2f0ea; --fg:#1d1c1a; --muted:#6b6862; --rule:#e2dfd6;
+  --clean:#cfccc2; --minor:#e3a33a; --major:#c9542b; --bar:#b3afa4; --hi:#2f6fc0;
+  --display:"Fraunces",Georgia,serif; --body:"Source Sans 3",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171716; --panel:#22211f; --fg:#efede7; --muted:#a29f97; --rule:#33322f;
+  --clean:#55534d; --minor:#d4952c; --major:#e0683d; --bar:#6e6b64; --hi:#5b97e3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171716; --panel:#22211f; --fg:#efede7; --muted:#a29f97; --rule:#33322f;
+  --clean:#55534d; --minor:#d4952c; --major:#e0683d; --bar:#6e6b64; --hi:#5b97e3; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:17px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 56px}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
+h1,h2{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:32px;line-height:1.2} h2{font-size:22px}
+p{margin:0;max-width:65ch}
+.lede{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tile{background:var(--panel);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.tile .k{font-size:14px;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:40px;line-height:1.1;font-variant-numeric:tabular-nums lining-nums}
+.tile .n{font-size:15px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+.stack{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center;font-size:14px}
+.stack .lab{color:var(--muted);text-align:right}
+.seg{display:flex;height:28px;gap:2px}
+.seg div{display:flex;align-items:center;padding-left:6px;font-size:13px;font-weight:600;color:#1d1c1a;white-space:nowrap;overflow:hidden}
+.seg div:first-child{border-radius:4px 0 0 4px}.seg div:last-child{border-radius:0 4px 4px 0}
+.example{background:var(--panel);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.example table{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+.example td{padding:3px 14px 3px 0}
+.example tr.tot td{border-top:1px solid var(--rule);padding-top:6px;font-weight:600}
+.bars{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:150px minmax(0,1fr) 56px;gap:10px;align-items:center;font-size:15px}
+.row .lab{text-align:right;color:var(--muted)}
+.row.hi .lab{color:var(--fg);font-weight:600}
+.row .b{height:16px;border-radius:0 4px 4px 0;background:var(--bar)}
+.row.hi .b{background:var(--hi)}
+.row .b.cut{background:repeating-linear-gradient(90deg,var(--bar) 0 6px,transparent 6px 9px)}
+.row .val{font-variant-numeric:tabular-nums}
+.note{font-size:15px;color:var(--muted)}
+@media (max-width:480px){.row,.stack{grid-template-columns:110px minmax(0,1fr) 48px}.stack{grid-template-columns:110px minmax(0,1fr)}}
+</style>
+<main>
+<header style="display:flex;flex-direction:column;gap:8px">
+  <h1>Step 2: how the translations scored</h1>
+  <p class="lede">WMT24 English to Mexican Spanish. 9,330 translated passages: 622 English passages, each translated by 15 systems. Critical errors weigh 5 penalty points, matching the official scoring.</p>
+</header>
+
+<section>
+  <h2>The three headline numbers</h2>
+  <p>These three are about all 9,330 passages pooled together. They mix all 15 systems, so they describe the whole dataset, not any one system.</p>
+  <div class="tiles">
+    <div class="tile"><span class="k">Perfect (0 penalty points)</span><span class="v">77%</span><span class="n">About 7,180 passages had no error marked at all.</span></div>
+    <div class="tile"><span class="k">At least one major error</span><span class="v">9%</span><span class="n">About 860 passages had at least one serious mistake.</span></div>
+    <div class="tile"><span class="k">Average penalty points per passage</span><span class="v">0.99</span><span class="n">All penalty points added up, divided by 9,330.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Why the average is about 1 when most passages score 0</h2>
+  <p>A few passages carry a lot of penalty points and pull the average up. The typical passage scores 0. The bars below count the same 9,330 passages two ways.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--clean)"></i>Perfect, 0 penalty points</span>
+    <span><i class="sw" style="background:var(--minor)"></i>Minor errors only, about 1.2 penalty points each</span>
+    <span><i class="sw" style="background:var(--major)"></i>Has a major error, about 9 penalty points each</span>
+  </div>
+  <div class="stack">
+    <span class="lab">Share of passages</span>
+    <div class="seg"><div style="width:76.9%;background:var(--clean)">77%</div><div style="width:13.9%;background:var(--minor)">14%</div><div style="width:9.2%;background:var(--major)">9%</div></div>
+    <span class="lab">Share of penalty points</span>
+    <div class="seg"><div style="width:17.4%;background:var(--minor)">17%</div><div style="width:82.6%;background:var(--major)">83%</div></div>
+  </div>
+  <p>The 9% of passages with a major error hold 83% of all penalty points. One broken system, MSLC, holds 46% on its own. Leave MSLC out and the average drops to 0.58.</p>
+  <div class="example">
+    <strong>The same idea with 100 passages</strong>
+    <table>
+      <tr><td>77 perfect passages</td><td>77 × 0</td><td>= 0</td></tr>
+      <tr><td>14 with minor errors</td><td>14 × 1.2</td><td>≈ 17</td></tr>
+      <tr><td>9 with a major error</td><td>9 × 9</td><td>≈ 81</td></tr>
+      <tr class="tot"><td>Total penalty points</td><td></td><td>≈ 98</td></tr>
+    </table>
+    <span>98 penalty points ÷ 100 passages ≈ 1. Most passages scored 0, but the average is close to 1.</span>
+  </div>
+</section>
+
+<section>
+  <h2>Which systems are best?</h2>
+  <p>Average penalty points per passage for each system, across its 622 passages. Shorter is better. GPT-4's 0.12 means most of its passages scored 0. Blue is refA, the human translator.</p>
+  <div class="bars" id="sys"></div>
+  <p class="note">refA's place is mostly a quirk. On the speech passages, reviewers compared it to an automatic transcript, not to what was actually said. Leave speech out and refA ranks 4th of 15.</p>
+</section>
+
+<section>
+  <h2>Are some reviewers harsher?</h2>
+  <p>Share of passages each reviewer marked with any error, MSLC left out. rater2 was the harshest of the four inside 10 of 14 systems, so it is not just that rater2 got the worse systems.</p>
+  <div class="bars" id="rat"></div>
+</section>
+
+<p class="note">Source: mqm-judge-eval, src/score.py, with critical errors at 5 penalty points.</p>
+</main>
+<script>
+const sys=[["GPT-4",.12],["Unbabel-Tower70B",.20],["Claude-3.5",.26],["Mistral-Large",.26],["Gemini-1.5-Pro",.39],["Dubformer",.43],["Llama3-70B",.52],["refA (human)",.55],["IOL_Research",.57],["CommandR-plus",.62],["ONLINE-W",.65],["IKUN",.94],["ONLINE-B",1.08],["Aya23",1.52],["MSLC",6.81]];
+const max=1.6;
+document.getElementById("sys").innerHTML=sys.map(([n,v])=>{const cut=v>max;
+  return `<div class="row${n.startsWith("refA")?" hi":""}"><span class="lab">${n}</span><div class="b${cut?" cut":""}" style="width:${Math.min(v/max,1)*100}%"></div><span class="val">${v.toFixed(2)}${cut?" →":""}</span></div>`}).join("");
+const rat=[["rater1",13],["rater2",36],["rater3",14],["rater4",16]];
+document.getElementById("rat").innerHTML=rat.map(([n,v])=>
+  `<div class="row${n==="rater2"?" hi":""}"><span class="lab">${n}</span><div class="b" style="width:${v/40*100}%"></div><span class="val">${v}%</span></div>`).join("");
+</script>
