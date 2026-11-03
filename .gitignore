@@ -6,4 +6,7 @@ __pycache__/
 *.pyc
 .DS_Store
 # Generated results; recreate with the scripts
-out/
+out/*
+!out/judge_enes.csv
+!out/sample_enes.csv
+!out/segments_enes.csv
