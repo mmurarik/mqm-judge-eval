@@ -21,6 +21,12 @@ severity.
 
 Work in progress. Results will be added here as each step is done.
 
+- **Step 2, how the translations scored:**
+  [docs/step-2-penalty-scores.html](docs/step-2-penalty-scores.html).
+  Why the average is about 1 penalty point per passage when most passages
+  score 0, which systems did best, and how harsh each reviewer was. Download
+  and open it in a browser.
+
 ## Ideas for later
 
 - **Rule-based checks before the AI.** A plain script that catches mechanical
