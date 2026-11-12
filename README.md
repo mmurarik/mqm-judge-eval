@@ -68,6 +68,99 @@ times.
 - One model (Claude Opus 5.5) with one prompt, frozen before the test.
 - The judge saw each passage alone; the reviewers saw the surrounding passages.
 
+## The short version
+
+```mermaid
+flowchart TD
+    A["<b>1. Built an AI judge</b><br/>English to Spanish, tested against professional reviewers"]
+    B["Cleared about a third of translations<br/>Missed 1 of 36 with a major error"]
+    C["<b>2. Checked the yardstick</b><br/>Found a second professional review of the same translations"]
+    D["The two human teams agreed only slightly<br/>kappa 0.09 across 4,928 translations"]
+    E["<b>3. Compared all three</b><br/>66 test translations covered by the judge and both reviews"]
+    F["The judge matched the original reviewers about as well as<br/>the second human team did, and cleared no major errors"]
+    G["<b>4. Weakness: it flags too much</b><br/>Safe but cautious, so it saves less reviewer time than it could"]
+    A --> B --> C --> D --> E --> F --> G
+```
+
+The most useful finding was how much the human reviewers disagreed with each
+other, because that limits how well any judge can be evaluated.
+
+## How reliable is the yardstick?
+
+The same 2024 English to Spanish translations were reviewed a second time by
+different professionals for the WMT24 shared task
+(https://github.com/wmt-conference/wmt24-news-systems). That makes it possible
+to compare two human reviews with each other, and both with the judge.
+
+**Two human reviews of the same 4,928 translations**
+
+| Measure | Result |
+|---|---|
+| Put the translation in the same group (no errors, minor only, major) | 56% |
+| Agreement beyond chance (kappa) | 0.09 (95% range 0.07 to 0.12) |
+| Translations the first review marked major that the second marked clean | 31% of 281 |
+| Share flagged by the second review's two vendors | 15% and 67% |
+
+Kappa runs from 0 (no better than chance) to 1 (perfect). Below 0.20 is
+conventionally called slight agreement (Landis and Koch, 1977).
+
+**Judge and both reviews on the 66 test translations all three covered**
+
+```mermaid
+flowchart LR
+    U(["Original reviewers"])
+    J(["AI judge"])
+    S(["Second review"])
+    U ---|"0.29"| J
+    U ---|"0.20"| S
+    J ---|"0.13"| S
+```
+
+| Pair | Kappa | 95% range |
+|---|---|---|
+| Original reviewers and AI judge | 0.29 | 0.11 to 0.46 |
+| Original reviewers and second review | 0.20 | 0.03 to 0.36 |
+| AI judge and second review | 0.13 | -0.02 to 0.28 |
+
+| Of the 22 translations the original reviewers marked major | Cleared as error-free |
+|---|---|
+| AI judge | 0 |
+| Second human review | 5 |
+
+The ranges overlap, so the claim is "about as well as a second human review",
+not "better than".
+
+### Three decisions behind the numbers
+
+| Decision | Why |
+|---|---|
+| Stopped treating one reviewer as ground truth | One of four reviewers flagged 36% of translations, the others 13% to 16%. Two review teams agreed only slightly on the same text. A judge can only look as good as the yardstick it is measured against. |
+| Sized the claim to the sample | 36 major-error cases with 1 miss supports "miss rate under about 12%" at 95% confidence (exact binomial). Claiming "under 5%" needs 59 cases with no misses, or 93 with one. |
+| Did not pool data that was not comparable | Public ratings for other languages come from different years, vendors and review schemes. Each language is reported on its own. Russian (2022) was dropped because each reviewer rated exactly one text type, so reviewer and text type cannot be separated. |
+
+### Weaknesses
+
+- One language, a small sample, one judge prompt.
+- The judge's extra flags could be real catches or nitpicks. This data cannot
+  tell which.
+- The second review was uneven. One vendor's reviewers flagged most of what
+  they saw. Without that vendor, agreement between the two human reviews rises
+  to 0.17 (0.13 to 0.21), still slight.
+- The two reviews used different schemes (full MQM, and error spans with
+  severity only), so this is agreement across schemes, not a standard
+  inter-rater check.
+- The scripts for this section are not in the repo yet, and the second
+  review's data is not redistributed here because its repo states no license.
+
+### What comes next
+
+- Scale to more languages with the 2024 data, where the same translation
+  systems were reviewed in eight languages from English, including
+  lower-resource ones like Icelandic and Hindi.
+- Move from "how often does the judge agree" to "the judge clears
+  translations with a guaranteed maximum miss rate", with the sample sized for
+  each language.
+
 ## How it was done
 
 - **Explore the data** (`src/explore.py`). 11,345 marked errors across 9,330
