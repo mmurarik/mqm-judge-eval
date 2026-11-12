@@ -3,6 +3,13 @@
 A small test of whether an LLM judge finds translation errors the way
 professional reviewers do, and where it can and can't be trusted.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.png">
+    <img alt="An English passage is translated into Spanish by a machine system. A professional reviewer and the AI judge each mark every error in that translation, and the two verdicts are compared. If the judge holds up, the translations it clears can skip human review." src="docs/assets/how-it-works-light.png" width="900">
+  </picture>
+</p>
+
 ## The question
 
 Translation teams check AI-translated content by hand, which is slow and
@@ -10,7 +17,7 @@ expensive. Having an AI do the first pass would help, but only if its checks
 are reliable. This project measures that on English to Spanish, using expert
 reviews as the yardstick.
 
-## Background: the data and the literature
+## Background: the data
 
 ### Where the data come from
 
@@ -55,20 +62,6 @@ each error span as minor or major, with no category, then gives a score from
 systems and passages. The two reviews are compared at the level they share:
 no errors, minor only, or major.
 
-### Literature
-
-| Topic | Reference | Link |
-|---|---|---|
-| The MQM reviews used here | Freitag et al. 2024. Are LLMs Breaking MT Metrics? Results of the WMT24 Metrics Shared Task. WMT 2024 | [aclanthology.org/2024.wmt-1.2](https://aclanthology.org/2024.wmt-1.2/) |
-| The second review | Kocmi et al. 2024a. Findings of the WMT24 General Machine Translation Shared Task. WMT 2024 | [aclanthology.org/2024.wmt-1.1](https://aclanthology.org/2024.wmt-1.1/) |
-| ESA | Kocmi et al. 2024b. Error Span Annotation: A Balanced Approach for Human Evaluation of Machine Translation. WMT 2024 | [aclanthology.org/2024.wmt-1.131](https://aclanthology.org/2024.wmt-1.131/) |
-| MQM, original framework | Lommel, Uszkoreit, Burchardt 2014. Multidimensional Quality Metrics (MQM). Tradumàtica 12 | Cited as in the WMT papers; not read for this project |
-| MQM for machine translation | Freitag et al. 2021. Experts, Errors, and Context: A Large-Scale Study of Human Evaluation for Machine Translation. TACL | [aclanthology.org/2021.tacl-1.87](https://aclanthology.org/2021.tacl-1.87/) |
-| An LLM marking MQM errors | Kocmi and Federmann 2023. GEMBA-MQM: Detecting Translation Quality Error Spans with GPT-4. WMT 2023 | [aclanthology.org/2023.wmt-1.64](https://aclanthology.org/2023.wmt-1.64/) |
-| Ranges that respect grouped data | Miller 2024. Adding Error Bars to Evals | [arxiv.org/abs/2411.00640](https://arxiv.org/abs/2411.00640) |
-| Reading kappa | Landis and Koch 1977. The Measurement of Observer Agreement for Categorical Data. Biometrics 33 | Source of the "slight agreement" label; a convention, not a test |
-| Clearing with a guarantee (next step) | Jung, Brahman, Choi 2024. Trust or Escalate: LLM Judges with Provable Guarantees for Human Agreement | [arxiv.org/abs/2407.18370](https://arxiv.org/abs/2407.18370) |
-
 ## Results
 
 **The AI judge could clear about a third of translations with no human
@@ -96,11 +89,25 @@ What this means:
   isn't just that they got worse translations. Any judge measured against a
   single reviewer inherits that reviewer's strictness.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/one-miss-dark.png">
+    <img alt="The one major error the judge cleared. The Spanish translation contains leftover web code for quotation marks in four places. The professional reviewer marked the first as critical and three more as minor punctuation, 5.3 penalty points. The AI judge found no errors." src="docs/assets/one-miss-light.png" width="900">
+  </picture>
+</p>
+
 ### How the judge and reviewers compared
 
 108 test translations, 36 from each reviewer group (no errors, minor errors
 only, a major error). Rows are what the reviewer found; columns are what the
 judge found.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/judge-vs-reviewers-dark.png">
+    <img alt="Of 36 translations the reviewer passed, the judge found no errors in 15, minor errors in 16 and a major error in 5. Of 36 with minor errors only: 4, 25 and 7. Of 36 with a major error: 1, 13 and 22." src="docs/assets/judge-vs-reviewers-light.png" width="900">
+  </picture>
+</p>
 
 | Reviewer found | Judge: no errors | Judge: minor | Judge: major |
 |---|---|---|---|
@@ -154,6 +161,13 @@ Kappa runs from 0 (no better than chance) to 1 (perfect). Below 0.20 is
 conventionally called slight agreement (Landis and Koch, 1977).
 
 **Judge and both reviews on the 66 test translations all three covered**
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/yardstick-dark.png">
+    <img alt="Agreement on 66 test translations, kappa with 95 percent range. AI judge and original reviewers 0.29 (0.11 to 0.46). Second review and original reviewers 0.20 (0.03 to 0.36). AI judge and second review 0.13 (-0.02 to 0.28). The ranges overlap." src="docs/assets/yardstick-light.png" width="900">
+  </picture>
+</p>
 
 | Pair | Kappa | 95% range |
 |---|---|---|
@@ -217,6 +231,9 @@ not "better than".
 - **Compare** (`src/compare.py`). The table above, the reweighted clear rate,
   and the range.
 
+- **Draw the figures** (`src/figures.py`). The images in this README, in
+  `docs/assets/`.
+
 To reproduce: `src/get_data.py` downloads the ratings, then run the steps in
 order. The judge step needs an Anthropic API key in `.env`.
 
@@ -252,3 +269,17 @@ Google's. The penalty points and the judge's verdicts are this project's.
   test set, then freeze them before the test.
 - **Other language pairs.** Google's 2024 release covers more than English to
   Spanish; check whether the results hold.
+
+## Literature
+
+| Topic | Reference | Link |
+|---|---|---|
+| The MQM reviews used here | Freitag et al. 2024. Are LLMs Breaking MT Metrics? Results of the WMT24 Metrics Shared Task. WMT 2024 | [aclanthology.org/2024.wmt-1.2](https://aclanthology.org/2024.wmt-1.2/) |
+| The second review | Kocmi et al. 2024a. Findings of the WMT24 General Machine Translation Shared Task. WMT 2024 | [aclanthology.org/2024.wmt-1.1](https://aclanthology.org/2024.wmt-1.1/) |
+| ESA | Kocmi et al. 2024b. Error Span Annotation: A Balanced Approach for Human Evaluation of Machine Translation. WMT 2024 | [aclanthology.org/2024.wmt-1.131](https://aclanthology.org/2024.wmt-1.131/) |
+| MQM, original framework | Lommel, Uszkoreit, Burchardt 2014. Multidimensional Quality Metrics (MQM). Tradumàtica 12 | Cited as in the WMT papers; not read for this project |
+| MQM for machine translation | Freitag et al. 2021. Experts, Errors, and Context: A Large-Scale Study of Human Evaluation for Machine Translation. TACL | [aclanthology.org/2021.tacl-1.87](https://aclanthology.org/2021.tacl-1.87/) |
+| An LLM marking MQM errors | Kocmi and Federmann 2023. GEMBA-MQM: Detecting Translation Quality Error Spans with GPT-4. WMT 2023 | [aclanthology.org/2023.wmt-1.64](https://aclanthology.org/2023.wmt-1.64/) |
+| Ranges that respect grouped data | Miller 2024. Adding Error Bars to Evals | [arxiv.org/abs/2411.00640](https://arxiv.org/abs/2411.00640) |
+| Reading kappa | Landis and Koch 1977. The Measurement of Observer Agreement for Categorical Data. Biometrics 33 | Source of the "slight agreement" label; a convention, not a test |
+| Clearing with a guarantee (next step) | Jung, Brahman, Choi 2024. Trust or Escalate: LLM Judges with Provable Guarantees for Human Agreement | [arxiv.org/abs/2407.18370](https://arxiv.org/abs/2407.18370) |
