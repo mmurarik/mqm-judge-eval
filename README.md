@@ -10,12 +10,64 @@ expensive. Having an AI do the first pass would help, but only if its checks
 are reliable. This project measures that on English to Spanish, using expert
 reviews as the yardstick.
 
-## Data
+## Background: the data and the literature
 
-Google's public MQM ratings from the WMT 2024 translation evaluation
-(https://github.com/google/wmt-mqm-human-evaluation, Apache 2.0). Professional
-translators marked every error in machine translations, with a category and a
-severity.
+### Where the data come from
+
+| | |
+|---|---|
+| Event | WMT24, the Ninth Conference on Machine Translation, November 2024. Teams submit translation systems, and people review the output |
+| What was collected | 622 English passages (news, literary, social media, speech), each translated into Spanish by 15 systems: 9,330 translations. Professional reviewers marked every error in each one. Four reviewers; each translation was reviewed once |
+| Why it was collected | To test automatic translation metrics against human judgement (the WMT24 metrics task) |
+| Where it is | [github.com/google/wmt-mqm-human-evaluation](https://github.com/google/wmt-mqm-human-evaluation), Apache 2.0 |
+| Which Spanish | Mexico. The metrics paper says "the testset is for Spanish from Mexico rather than Spanish from Spain" (Freitag et al. 2024, section 3.2) |
+| Paper that describes it | Freitag et al. 2024 |
+
+### How this project uses the data differently
+
+The organisers collected the reviews to score automatic metrics. This project
+reuses them to ask a different question: **can an AI judge take the first
+pass of translation review, and how far can its verdicts be trusted?**
+
+The collection was not designed for that, which matters in two ways:
+
+| Design choice in the original collection | What it means here |
+|---|---|
+| Each translation was reviewed by one person | A reviewer's strictness cannot be separated from the translation's quality without a second review |
+| Reviewers saw the surrounding passages | The judge saw each passage alone, so it had less to go on |
+
+### What MQM is
+
+MQM (Multidimensional Quality Metrics) is a way for a person to review a
+translation by marking the errors in it.
+
+| | |
+|---|---|
+| Introduced | Lommel et al. 2014; adapted for machine translation research by Freitag et al. 2021 |
+| What the reviewer marks | Each error span, its category (for example mistranslation, omission, grammar) and its severity (minor, major, critical) |
+| Where the score comes from | Penalty points computed from the errors with fixed weights. This project uses the WMT24 weights: minor 1, minor punctuation 0.1, major 5, critical 5, not a translation 25 |
+| How this project groups translations | No errors, minor errors only, or at least one major error (critical counts as major, as in the WMT papers) |
+
+The second review used in "How reliable is the yardstick?" follows a lighter
+scheme, ESA (Error Span Annotation, Kocmi et al. 2024b): the reviewer marks
+each error span as minor or major, with no category, then gives a score from
+0 to 100. It was collected for the WMT24 general translation task on the same
+systems and passages. The two reviews are compared at the level they share:
+no errors, minor only, or major.
+
+### Literature
+
+| Topic | Reference | Link |
+|---|---|---|
+| The MQM reviews used here | Freitag et al. 2024. Are LLMs Breaking MT Metrics? Results of the WMT24 Metrics Shared Task. WMT 2024 | [aclanthology.org/2024.wmt-1.2](https://aclanthology.org/2024.wmt-1.2/) |
+| The second review | Kocmi et al. 2024a. Findings of the WMT24 General Machine Translation Shared Task. WMT 2024 | [aclanthology.org/2024.wmt-1.1](https://aclanthology.org/2024.wmt-1.1/) |
+| ESA | Kocmi et al. 2024b. Error Span Annotation: A Balanced Approach for Human Evaluation of Machine Translation. WMT 2024 | [aclanthology.org/2024.wmt-1.131](https://aclanthology.org/2024.wmt-1.131/) |
+| MQM, original framework | Lommel, Uszkoreit, Burchardt 2014. Multidimensional Quality Metrics (MQM). Tradumàtica 12 | Cited as in the WMT papers; not read for this project |
+| MQM for machine translation | Freitag et al. 2021. Experts, Errors, and Context: A Large-Scale Study of Human Evaluation for Machine Translation. TACL | [aclanthology.org/2021.tacl-1.87](https://aclanthology.org/2021.tacl-1.87/) |
+| An LLM marking MQM errors | Kocmi and Federmann 2023. GEMBA-MQM: Detecting Translation Quality Error Spans with GPT-4. WMT 2023 | [aclanthology.org/2023.wmt-1.64](https://aclanthology.org/2023.wmt-1.64/) |
+| Ranges that respect grouped data | Miller 2024. Adding Error Bars to Evals | [arxiv.org/abs/2411.00640](https://arxiv.org/abs/2411.00640) |
+| Reading kappa | Landis and Koch 1977. The Measurement of Observer Agreement for Categorical Data. Biometrics 33 | Source of the "slight agreement" label; a convention, not a test |
+| Clearing with a guarantee (next step) | Jung, Brahman, Choi 2024. Trust or Escalate: LLM Judges with Provable Guarantees for Human Agreement | [arxiv.org/abs/2407.18370](https://arxiv.org/abs/2407.18370) |
 
 ## Results
 
@@ -70,17 +122,12 @@ times.
 
 ## The short version
 
-```mermaid
-flowchart TD
-    A["<b>1. Built an AI judge</b><br/>English to Spanish, tested against professional reviewers"]
-    B["Cleared about a third of translations<br/>Missed 1 of 36 with a major error"]
-    C["<b>2. Checked the yardstick</b><br/>Found a second professional review of the same translations"]
-    D["The two human teams agreed only slightly<br/>kappa 0.09 across 4,928 translations"]
-    E["<b>3. Compared all three</b><br/>66 test translations covered by the judge and both reviews"]
-    F["The judge matched the original reviewers about as well as<br/>the second human team did, and cleared no major errors"]
-    G["<b>4. Weakness: it flags too much</b><br/>Safe but cautious, so it saves less reviewer time than it could"]
-    A --> B --> C --> D --> E --> F --> G
-```
+| Step | What was done | What it showed |
+|---|---|---|
+| 1. Build the judge | An AI judge for English to Spanish, tested against professional reviewers | Cleared about a third of translations. Missed 1 of 36 with a major error. |
+| 2. Check the yardstick | Found a second professional review of the same translations | The two human teams agreed only slightly (kappa 0.09 across 4,928 translations). |
+| 3. Compare all three | Judge and both reviews on the 66 test translations they share | The judge matched the original reviewers about as well as the second human team did, and cleared no major errors. |
+| 4. Name the weakness | Looked at what the judge flagged that reviewers had passed | It flags too much. Safe but cautious, so it saves less reviewer time than it could. |
 
 The most useful finding was how much the human reviewers disagreed with each
 other, because that limits how well any judge can be evaluated.
@@ -105,16 +152,6 @@ Kappa runs from 0 (no better than chance) to 1 (perfect). Below 0.20 is
 conventionally called slight agreement (Landis and Koch, 1977).
 
 **Judge and both reviews on the 66 test translations all three covered**
-
-```mermaid
-flowchart LR
-    U(["Original reviewers"])
-    J(["AI judge"])
-    S(["Second review"])
-    U ---|"0.29"| J
-    U ---|"0.20"| S
-    J ---|"0.13"| S
-```
 
 | Pair | Kappa | 95% range |
 |---|---|---|
