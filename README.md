@@ -29,12 +29,12 @@ The organisers collected the reviews to score automatic metrics. This project
 reuses them to ask a different question: **can an AI judge take the first
 pass of translation review, and how far can its verdicts be trusted?**
 
-The collection was not designed for that, which matters in two ways:
+The collection was not designed for that, which shaped two choices:
 
 | Design choice in the original collection | What it means here |
 |---|---|
 | Each translation was reviewed by one person | A reviewer's strictness cannot be separated from the translation's quality without a second review |
-| Reviewers saw the surrounding passages | The judge saw each passage alone, so it had less to go on |
+| Reviewers saw the surrounding passages | The judge was given up to five neighboring passages on each side, in English and Spanish, and told to mark errors only in the passage under review |
 
 ### What MQM is
 
@@ -118,7 +118,9 @@ times.
 - English to Spanish (Mexico) only.
 - 108 test translations, each scored by one reviewer.
 - One model (Claude Opus 5.5) with one prompt, frozen before the test.
-- The judge saw each passage alone; the reviewers saw the surrounding passages.
+- The judge saw up to five neighboring passages on each side for context. The
+  reviewers saw up to ten in all, so the two did not see exactly the same
+  context.
 
 ## The short version
 
@@ -248,6 +250,5 @@ Google's. The penalty points and the judge's verdicts are this project's.
   panel beats a single judge.
 - **A development set.** Tune the judge's instructions on passages outside the
   test set, then freeze them before the test.
-- **Context.** Give the judge the neighboring passages, as the human reviewers had.
 - **Other language pairs.** Google's 2024 release covers more than English to
   Spanish; check whether the results hold.
