@@ -70,11 +70,6 @@ times.
 
 ## The short version
 
-```mermaid
-flowchart LR
-    A["1. Build the judge"] --> B["2. Check the yardstick"] --> C["3. Compare all three"] --> D["4. Name the weakness"]
-```
-
 | Step | What was done | What it showed |
 |---|---|---|
 | 1. Build the judge | An AI judge for English to Spanish, tested against professional reviewers | Cleared about a third of translations. Missed 1 of 36 with a major error. |
@@ -105,16 +100,6 @@ Kappa runs from 0 (no better than chance) to 1 (perfect). Below 0.20 is
 conventionally called slight agreement (Landis and Koch, 1977).
 
 **Judge and both reviews on the 66 test translations all three covered**
-
-```mermaid
-flowchart LR
-    U(["Original reviewers"])
-    J(["AI judge"])
-    S(["Second review"])
-    U ---|"0.29"| J
-    U ---|"0.20"| S
-    J ---|"0.13"| S
-```
 
 | Pair | Kappa | 95% range |
 |---|---|---|
