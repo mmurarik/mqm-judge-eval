@@ -62,6 +62,61 @@ each error span as minor or major, with no category, then gives a score from
 systems and passages. The two reviews are compared at the level they share:
 no errors, minor only, or major.
 
+## The test set: how it was picked and what it can show
+
+### How it was picked
+
+108 translations, drawn by `src/sample.py` with a fixed seed so the same set
+comes out every time.
+
+| Choice | Why |
+|---|---|
+| Equal groups: 36 with no errors, 36 with minor errors only, 36 with a major error | 81% of translations have no errors and 6% have a major one. A random draw of 108 would contain about 6 or 7 major-error translations, too few to say anything about misses. Results are reweighted back to the real shares afterwards |
+| 9 from each of the four reviewers in every group | One reviewer flagged 36% of translations and the others 13% to 16%. Spreading each group evenly across reviewers keeps one reviewer's strictness from deciding the result |
+| Machine systems only | The human reference translation and one broken system (MSLC) were left out, so the test is about ordinary machine output |
+| 108 in total | Chosen to keep the judge run inside a 5 dollar budget and to divide evenly into 3 groups and 4 reviewers. It was not set by a power analysis beforehand |
+
+The 108 cover 96 different source passages and 13 systems.
+
+Sampling by group and then reweighting is standard stratified sampling
+(Cochran, Sampling Techniques, 1977; cited from memory). Balancing across
+reviewers is blocking on a factor that is known to matter but is not the
+thing being tested.
+
+### What 36 per group can and cannot show
+
+Worked out after the test, with exact binomial limits (Clopper and Pearson,
+1934). Exact limits are used because the counts are small and the
+normal approximation is unreliable near zero. The 95% level is convention.
+
+**Missed major errors (1 of 36)**
+
+| Question | Answer |
+|---|---|
+| What the result supports | A miss rate under 12.5%, with 95% confidence (one-sided) |
+| If the judge really missed 15% of major errors, how often would it show 1 miss or fewer in 36? | 2% of the time. The test had about 98% power to expose a judge that bad |
+| If it really missed 10%? | 11% of the time. About 89% power |
+| If it really missed 5%? | 46% of the time. The test cannot tell 5% from 10% |
+
+| To claim a miss rate under | Major-error cases needed with 0 misses | With 1 miss |
+|---|---|---|
+| 10% | 29 | 46 |
+| 5% | 59 | 93 |
+
+**Share of translations the judge can clear (35%)**
+
+| Question | Answer |
+|---|---|
+| Range | 22% to 49% (bootstrap); the textbook formula for a stratified sample gives about plus or minus 13 points, which agrees |
+| Where the uncertainty comes from | 99% of it comes from the no-errors group, because that group stands for 81% of the data but has only 36 cases |
+| What would halve the range | About four times as many no-errors cases (144), with the other groups unchanged |
+
+The two questions pull in opposite directions. Equal groups are the right
+design for the miss rate, and a larger no-errors group is the right design
+for the clear rate. A follow-up test should size each group for the question
+it answers: at least 59 major-error cases (93 to allow one miss) and about
+144 no-errors cases.
+
 ## Results
 
 **The AI judge could clear about a third of translations with no human
@@ -281,5 +336,7 @@ Google's. The penalty points and the judge's verdicts are this project's.
 | MQM for machine translation | Freitag et al. 2021. Experts, Errors, and Context: A Large-Scale Study of Human Evaluation for Machine Translation. TACL | [aclanthology.org/2021.tacl-1.87](https://aclanthology.org/2021.tacl-1.87/) |
 | An LLM marking MQM errors | Kocmi and Federmann 2023. GEMBA-MQM: Detecting Translation Quality Error Spans with GPT-4. WMT 2023 | [aclanthology.org/2023.wmt-1.64](https://aclanthology.org/2023.wmt-1.64/) |
 | Ranges that respect grouped data | Miller 2024. Adding Error Bars to Evals | [arxiv.org/abs/2411.00640](https://arxiv.org/abs/2411.00640) |
+| Exact limits for small counts | Clopper and Pearson 1934. The Use of Confidence or Fiducial Limits Illustrated in the Case of the Binomial. Biometrika 26 | Cited from memory; not re-read for this project |
+| Stratified sampling | Cochran 1977. Sampling Techniques, 3rd ed. | Book; cited from memory |
 | Reading kappa | Landis and Koch 1977. The Measurement of Observer Agreement for Categorical Data. Biometrics 33 | Source of the "slight agreement" label; a convention, not a test |
 | Clearing with a guarantee (next step) | Jung, Brahman, Choi 2024. Trust or Escalate: LLM Judges with Provable Guarantees for Human Agreement | [arxiv.org/abs/2407.18370](https://arxiv.org/abs/2407.18370) |
