@@ -71,16 +71,16 @@ times.
 ## The short version
 
 ```mermaid
-flowchart TD
-    A["<b>1. Built an AI judge</b><br/>English to Spanish, tested against professional reviewers"]
-    B["Cleared about a third of translations<br/>Missed 1 of 36 with a major error"]
-    C["<b>2. Checked the yardstick</b><br/>Found a second professional review of the same translations"]
-    D["The two human teams agreed only slightly<br/>kappa 0.09 across 4,928 translations"]
-    E["<b>3. Compared all three</b><br/>66 test translations covered by the judge and both reviews"]
-    F["The judge matched the original reviewers about as well as<br/>the second human team did, and cleared no major errors"]
-    G["<b>4. Weakness: it flags too much</b><br/>Safe but cautious, so it saves less reviewer time than it could"]
-    A --> B --> C --> D --> E --> F --> G
+flowchart LR
+    A["1. Build the judge"] --> B["2. Check the yardstick"] --> C["3. Compare all three"] --> D["4. Name the weakness"]
 ```
+
+| Step | What was done | What it showed |
+|---|---|---|
+| 1. Build the judge | An AI judge for English to Spanish, tested against professional reviewers | Cleared about a third of translations. Missed 1 of 36 with a major error. |
+| 2. Check the yardstick | Found a second professional review of the same translations | The two human teams agreed only slightly (kappa 0.09 across 4,928 translations). |
+| 3. Compare all three | Judge and both reviews on the 66 test translations they share | The judge matched the original reviewers about as well as the second human team did, and cleared no major errors. |
+| 4. Name the weakness | Looked at what the judge flagged that reviewers had passed | It flags too much. Safe but cautious, so it saves less reviewer time than it could. |
 
 The most useful finding was how much the human reviewers disagreed with each
 other, because that limits how well any judge can be evaluated.
